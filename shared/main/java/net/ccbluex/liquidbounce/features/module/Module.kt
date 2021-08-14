@@ -137,4 +137,5 @@ open class Module : MinecraftInstance(), Listenable {
      * Events should be handled when module is enabled
      */
     override fun handleEvents() = state
+    open fun onUpdate() {}
 }

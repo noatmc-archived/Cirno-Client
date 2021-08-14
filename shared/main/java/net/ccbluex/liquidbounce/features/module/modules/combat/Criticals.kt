@@ -57,7 +57,9 @@ class Criticals : Module() {
                 "matrix" -> {
                     thePlayer.fallDistance = 4f
                     thePlayer.onCriticalHit(entity)
-                    mc.thePlayer!!.setPosition(mc.thePlayer!!.posX, mc.thePlayer!!.posY + 0.05, mc.thePlayer!!.posZ)
+                    if (thePlayer.onGround) {
+                        mc.thePlayer!!.setPosition(mc.thePlayer!!.posX, mc.thePlayer!!.posY + 0.05, mc.thePlayer!!.posZ)
+                    }
                 }
                 "ncppacket" -> {
                     mc.netHandler.addToSendQueue(classProvider.createCPacketPlayerPosition(x, y + 0.11, z, false))

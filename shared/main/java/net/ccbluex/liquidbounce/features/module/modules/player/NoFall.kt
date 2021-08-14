@@ -66,7 +66,7 @@ class NoFall : Module() {
                 mc.thePlayer!!.onGround = false
                 mc.thePlayer!!.sendQueue.addToSendQueue(classProvider.createCPacketPlayer(true))
             }
-            "matrix" -> if (mc.thePlayer!!.fallDistance > 2f) {
+            "matrix" -> if (mc.thePlayer!!.fallDistance > 10f) {
                 OPTPMODE = true
                 mc.thePlayer!!.onGround = true
                 mc.thePlayer!!.sendQueue.addToSendQueue(classProvider.createCPacketPlayer(true))

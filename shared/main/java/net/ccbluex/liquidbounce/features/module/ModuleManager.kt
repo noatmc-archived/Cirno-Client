@@ -124,6 +124,7 @@ class ModuleManager : Listenable {
                 BlockESP::class.java,
                 Chams::class.java,
                 Clip::class.java,
+                AntiPacketLogger::class.java,
                 Phase::class.java,
                 ServerCrasher::class.java,
                 NoFOV::class.java,

@@ -5,7 +5,6 @@
  */
 package net.ccbluex.liquidbounce.features.module.modules.movement.speeds.other
 
-import net.ccbluex.liquidbounce.api.minecraft.potion.PotionType
 import net.ccbluex.liquidbounce.event.MoveEvent
 import net.ccbluex.liquidbounce.features.module.modules.movement.speeds.SpeedMode
 import net.ccbluex.liquidbounce.utils.MovementUtils
@@ -15,7 +14,9 @@ class StrfeFast : SpeedMode("StrafeFast") {
         if (MovementUtils.isMoving) {
             if (mc.thePlayer!!.onGround) {
                 mc.thePlayer!!.jump()
-                MovementUtils.strafe(MovementUtils.speed * 2f)
+            }
+            if (!mc.thePlayer!!.onGround) {
+                MovementUtils.strafe(MovementUtils.speed * 2F)
             }
         }
     }

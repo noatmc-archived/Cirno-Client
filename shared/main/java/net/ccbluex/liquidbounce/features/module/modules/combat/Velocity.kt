@@ -31,8 +31,7 @@ class Velocity : Module() {
      */
     private val horizontalValue = FloatValue("Horizontal", 0F, 0F, 1F)
     private val verticalValue = FloatValue("Vertical", 0F, 0F, 1F)
-    private val modeValue = ListValue("Mode", arrayOf("Simple", "AAC", "AACPush", "AACZero", "AACv4",
-            "Reverse", "SmoothReverse", "Jump", "Glitch"), "Simple")
+    private val modeValue = ListValue("Mode", arrayOf("Matrix", "Simple", "AAC", "AACPush", "AACZero", "AACv4", "Reverse", "SmoothReverse", "Jump", "Glitch"), "Simple")
 
     // Reverse
     private val reverseStrengthValue = FloatValue("ReverseStrength", 1F, 0.1F, 1F)
@@ -53,7 +52,8 @@ class Velocity : Module() {
 
     // SmoothReverse
     private var reverseHurt = false
-
+    // Matrix
+    private var time = 0
     // AACPush
     private var jump = false
 
@@ -62,6 +62,7 @@ class Velocity : Module() {
 
     override fun onDisable() {
         mc.thePlayer?.speedInAir = 0.02F
+        time = 0
     }
 
     @EventTarget
@@ -196,7 +197,25 @@ class Velocity : Module() {
                     packetEntityVelocity.motionY = (packetEntityVelocity.motionY * vertical).toInt()
                     packetEntityVelocity.motionZ = (packetEntityVelocity.motionZ * horizontal).toInt()
                 }
-
+                "matrix" -> {
+                    val yawd = Math.toRadians(mc.thePlayer!!.rotationYaw.toDouble())
+                    val x22 = -sin(yawd) * 0.02
+                    val z22 = cos(yawd) * 0.02
+                    if (time == 7) {
+                        mc.thePlayer!!.motionX = mc.thePlayer!!.motionX + x22 + -sin(yawd) / 2
+                        mc.thePlayer!!.motionZ = mc.thePlayer!!.motionZ + x22 + cos(yawd) / 2
+                        if (!thePlayer.onGround) {
+                            thePlayer.motionY - 0.25
+                        }
+                        time = 0
+                    }
+                    if (thePlayer.hurtTime > 0) {
+                        mc.thePlayer!!.motionX = mc.thePlayer!!.motionX + x22
+                        mc.thePlayer!!.motionZ = mc.thePlayer!!.motionZ + z22
+                        time++
+                        mc.gameSettings.keyBindSprint.pressed = true
+                    }
+                }
                 "aac", "reverse", "smoothreverse", "aaczero" -> velocityInput = true
 
                 "glitch" -> {

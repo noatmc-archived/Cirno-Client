@@ -32,6 +32,7 @@ class Speed : Module() {
             NCPHop(),
             YPort(),
             YPort2(),
+            Larkus(),
             NCPYPort(),
             Boost(),
             Frame(),
@@ -49,8 +50,6 @@ class Speed : Module() {
             AACLowHop(),
             Strfe(),
             StrfeFast(),
-            Matrix2(),
-            MatrixFast(),
             AACLowHop2(),
             AACLowHop3(),
             AACGround(),
@@ -67,8 +66,11 @@ class Speed : Module() {
             HiveHop(),
             HypixelHop(),
             Mineplex(),
+            Matrix(), // matrix
+            Matrix2(),
+            MatrixFast(),
+            MatrixOnGround(),
             MineplexGround(),  // Other
-            Matrix(),
             WarAC(), // WarAC
             SlowHop(),
             Zoom(),

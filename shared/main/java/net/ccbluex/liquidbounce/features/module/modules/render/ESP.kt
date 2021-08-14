@@ -36,7 +36,7 @@ import kotlin.math.min
 @ModuleInfo(name = "ESP", description = "Allows you to see targets through walls.", category = ModuleCategory.RENDER)
 class ESP : Module() {
     @JvmField
-    val modeValue = ListValue("Mode", arrayOf("Box", "OtherBox", "WireFrame", "2D", "Real2D", "Outline", "ShaderOutline", "ShaderGlow"), "Box")
+    val modeValue = ListValue("Mode", arrayOf("Cirno", "Box", "OtherBox", "WireFrame", "2D", "Real2D", "Outline", "ShaderOutline", "ShaderGlow"), "Box")
 
     @JvmField
     val outlineWidth = FloatValue("Outline-Width", 3f, 0.5f, 5f)
@@ -94,33 +94,36 @@ class ESP : Module() {
                         val posZ: Double = entityLiving.lastTickPosZ + (entityLiving.posZ - entityLiving.lastTickPosZ) * timer.renderPartialTicks - renderManager.renderPosZ
                         RenderUtils.draw2D(entityLiving, posX, posY, posZ, color.rgb, Color.BLACK.rgb)
                     }
+                    "cirno" -> {
+                        RenderUtils.drawEntityBox(entityLiving, Color(255, 0, 0, 255), true)
+                    }
                     "real2d" -> {
                         val renderManager = mc.renderManager
-                        val timer = mc.timer
-                        val bb = entityLiving.entityBoundingBox
-                                .offset(-entityLiving.posX, -entityLiving.posY, -entityLiving.posZ)
-                                .offset(entityLiving.lastTickPosX + (entityLiving.posX - entityLiving.lastTickPosX) * timer.renderPartialTicks,
-                                        entityLiving.lastTickPosY + (entityLiving.posY - entityLiving.lastTickPosY) * timer.renderPartialTicks,
-                                        entityLiving.lastTickPosZ + (entityLiving.posZ - entityLiving.lastTickPosZ) * timer.renderPartialTicks)
-                                .offset(-renderManager.renderPosX, -renderManager.renderPosY, -renderManager.renderPosZ)
-                        val boxVertices = arrayOf(doubleArrayOf(bb.minX, bb.minY, bb.minZ), doubleArrayOf(bb.minX, bb.maxY, bb.minZ), doubleArrayOf(bb.maxX, bb.maxY, bb.minZ), doubleArrayOf(bb.maxX, bb.minY, bb.minZ), doubleArrayOf(bb.minX, bb.minY, bb.maxZ), doubleArrayOf(bb.minX, bb.maxY, bb.maxZ), doubleArrayOf(bb.maxX, bb.maxY, bb.maxZ), doubleArrayOf(bb.maxX, bb.minY, bb.maxZ))
-                        var minX = Float.MAX_VALUE
-                        var minY = Float.MAX_VALUE
-                        var maxX = -1f
-                        var maxY = -1f
-                        for (boxVertex in boxVertices) {
-                            val screenPos = WorldToScreen.worldToScreen(Vector3f(boxVertex[0].toFloat(), boxVertex[1].toFloat(), boxVertex[2].toFloat()), mvMatrix, projectionMatrix, mc.displayWidth, mc.displayHeight)
-                                    ?: continue
-                            minX = min(screenPos.x, minX)
-                            minY = min(screenPos.y, minY)
-                            maxX = max(screenPos.x, maxX)
-                            maxY = max(screenPos.y, maxY)
-                        }
-                        if (minX > 0 || minY > 0 || maxX <= mc.displayWidth || maxY <= mc.displayWidth) {
-                            GL11.glColor4f(color.red / 255.0f, color.green / 255.0f, color.blue / 255.0f, 1.0f)
-                            GL11.glBegin(GL11.GL_LINE_LOOP)
-                            GL11.glVertex2f(minX, minY)
-                            GL11.glVertex2f(minX, maxY)
+                            val timer = mc.timer
+                            val bb = entityLiving.entityBoundingBox
+                                    .offset(-entityLiving.posX, -entityLiving.posY, -entityLiving.posZ)
+                                    .offset(entityLiving.lastTickPosX + (entityLiving.posX - entityLiving.lastTickPosX) * timer.renderPartialTicks,
+                                            entityLiving.lastTickPosY + (entityLiving.posY - entityLiving.lastTickPosY) * timer.renderPartialTicks,
+                                            entityLiving.lastTickPosZ + (entityLiving.posZ - entityLiving.lastTickPosZ) * timer.renderPartialTicks)
+                                    .offset(-renderManager.renderPosX, -renderManager.renderPosY, -renderManager.renderPosZ)
+                            val boxVertices = arrayOf(doubleArrayOf(bb.minX, bb.minY, bb.minZ), doubleArrayOf(bb.minX, bb.maxY, bb.minZ), doubleArrayOf(bb.maxX, bb.maxY, bb.minZ), doubleArrayOf(bb.maxX, bb.minY, bb.minZ), doubleArrayOf(bb.minX, bb.minY, bb.maxZ), doubleArrayOf(bb.minX, bb.maxY, bb.maxZ), doubleArrayOf(bb.maxX, bb.maxY, bb.maxZ), doubleArrayOf(bb.maxX, bb.minY, bb.maxZ))
+                            var minX = Float.MAX_VALUE
+                            var minY = Float.MAX_VALUE
+                            var maxX = -1f
+                            var maxY = -1f
+                            for (boxVertex in boxVertices) {
+                                val screenPos = WorldToScreen.worldToScreen(Vector3f(boxVertex[0].toFloat(), boxVertex[1].toFloat(), boxVertex[2].toFloat()), mvMatrix, projectionMatrix, mc.displayWidth, mc.displayHeight)
+                                        ?: continue
+                                minX = min(screenPos.x, minX)
+                                minY = min(screenPos.y, minY)
+                                maxX = max(screenPos.x, maxX)
+                                maxY = max(screenPos.y, maxY)
+                            }
+                            if (minX > 0 || minY > 0 || maxX <= mc.displayWidth || maxY <= mc.displayWidth) {
+                                GL11.glColor4f(color.red / 255.0f, color.green / 255.0f, color.blue / 255.0f, 1.0f)
+                                GL11.glBegin(GL11.GL_LINE_LOOP)
+                                GL11.glVertex2f(minX, minY)
+                                GL11.glVertex2f(minX, maxY)
                             GL11.glVertex2f(maxX, maxY)
                             GL11.glVertex2f(maxX, minY)
                             GL11.glEnd()

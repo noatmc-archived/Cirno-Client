@@ -81,7 +81,10 @@ class Fly : Module() {
             "HAC",
             "WatchCat",
             "Matrix",
+            "Rainbow",
+            "Verus",
             // Other
+            "FlyingPacket",
             "VClip",
             "Jetpack",
             "KeepAlive",
@@ -104,14 +107,19 @@ class Fly : Module() {
     private val mineplexSpeedValue = FloatValue("MineplexSpeed", 1f, 0.5f, 10f)
     private val neruxVaceTicks = IntegerValue("NeruxVace-Ticks", 6, 0, 20)
     private val redeskyHeight = FloatValue("Redesky-Height", 4f, 1f, 7f)
+    private val VerticalRain = FloatValue("Rainbow-Vertical", 10f, 1f, 20f)
+    private val alRain = FloatValue("Rainbow-Horizontal", 5f, 1f, 20f)
 
     // Visuals
+    private var rainbow = false
+    private var baconisgood = false
     private val markValue = BoolValue("Mark", true)
     private var startY = 0.0
     private val flyTimer = MSTimer()
     private val groundTimer = MSTimer()
     private var noPacketModify = false
     private var damageforncp = false
+    private var damagetrue = false
     private var aacJump = 0.0
     private var done = 0
     private var belivin = 0
@@ -151,6 +159,11 @@ class Fly : Module() {
                 "matrix" -> {
                     thePlayer.motionY = 0.42;
                     mc.timer.timerSpeed = 0.25f;
+                }
+                "verus" -> {
+                        mc.netHandler.addToSendQueue(classProvider.createCPacketPlayerPosition(mc.thePlayer!!.posX, mc.thePlayer!!.posY + 3.45, mc.thePlayer!!.posZ, false));
+                        mc.netHandler.addToSendQueue(classProvider.createCPacketPlayerPosition(mc.thePlayer!!.posX, mc.thePlayer!!.posY, mc.thePlayer!!.posZ, false));
+                        mc.netHandler.addToSendQueue(classProvider.createCPacketPlayerPosition(mc.thePlayer!!.posX, mc.thePlayer!!.posY, mc.thePlayer!!.posZ, true));
                 }
                 "oldncp" -> {
                     if (!thePlayer.onGround)
@@ -240,15 +253,15 @@ class Fly : Module() {
         val thePlayer = mc.thePlayer ?: return
 
         noFlag = false
+        damagetrue = false
 
         val mode = modeValue.get()
-
-        if (!mode.toUpperCase().startsWith("AAC") && !mode.equals("Minesucht", ignoreCase = true) &&
-                !mode.equals("Matrix", ignoreCase = true)) {
-            thePlayer.motionX = 0.0
-            thePlayer.motionY = 0.0
-            thePlayer.motionZ = 0.0
-        }
+            if (!mode.toUpperCase().startsWith("AAC") && !mode.equals("Rainbow", ignoreCase = true) &&
+                    !mode.equals("Matrix", ignoreCase = true)) {
+                thePlayer.motionX = 0.0
+                thePlayer.motionY = 0.0
+                thePlayer.motionZ = 0.0
+            }
         if(mode.equals("Redesky", ignoreCase = true)) {
             redeskyHClip2(0.0)
         }
@@ -274,6 +287,52 @@ class Fly : Module() {
                     if (mc.gameSettings.keyBindSneak.isKeyDown) thePlayer.motionY -= vanillaSpeed
                     MovementUtils.strafe(vanillaSpeed)
                     handleVanillaKickBypass()
+                }
+                "verus" -> {
+                    if(mc.thePlayer!!.hurtTime > 0) {
+                        damagetrue = true
+                    }
+                    if(damagetrue == true) {
+                        if (thePlayer.ticksExisted % 5 == 0) {
+                            mc.netHandler.addToSendQueue(classProvider.createCPacketKeepAlive())
+                        }
+                        mc.thePlayer!!.motionY = -0.0
+                        mc.thePlayer!!.onGround = true
+                        MovementUtils.strafe(0.5f)
+                        mc.netHandler.addToSendQueue(classProvider.createCPacketPlayer(true))
+                    }
+                }
+                "flyingpacket" -> {
+                    thePlayer.motionY = -0.1
+                    MovementUtils.HClip(0.03)
+                    mc.timer.timerSpeed = 0.5f
+                    thePlayer.motionY = if (thePlayer.motionY <= -0.02) 0.02 else -0.02
+                }
+                "rainbow" -> {
+                    mc.gameSettings.keyBindJump.pressed = false
+                    mc.gameSettings.keyBindForward.pressed = false
+                    mc.gameSettings.keyBindBack.pressed = false
+                    mc.gameSettings.keyBindLeft.pressed = false
+                    mc.gameSettings.keyBindRight.pressed = false
+                    val yaw = Math.toRadians(mc.thePlayer!!.rotationYaw.toDouble())
+                    val x22 = -sin(yaw) * alRain.get()
+                    val z22 = cos(yaw) * alRain.get()
+                    val bacon = mc.thePlayer!!
+                    if (baconisgood == false) {
+                        if (bacon.hurtTime > 0) {
+                            rainbow = true
+                        }
+                    }
+                    if (baconisgood == true && bacon.hurtTime > 0) {
+                        rainbow = true
+                    }
+                    if (rainbow) {
+                        mc.thePlayer!!.motionZ = mc.thePlayer!!.motionZ * z22
+                        mc.thePlayer!!.motionY = mc.thePlayer!!.motionY + VerticalRain.get()
+                        mc.thePlayer!!.motionX = mc.thePlayer!!.motionX * x22
+                        rainbow = false
+                        baconisgood = true
+                    }
                 }
                 "matrix" -> {
                     if (thePlayer.ticksExisted % 5 == 0) {
