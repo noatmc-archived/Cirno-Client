@@ -16,7 +16,7 @@ class StrfeFast : SpeedMode("StrafeFast") {
                 mc.thePlayer!!.jump()
             }
             if (!mc.thePlayer!!.onGround) {
-                MovementUtils.strafe(MovementUtils.speed * 2F)
+                MovementUtils.strafe(MovementUtils.speed * 1.35F)
             }
         }
     }

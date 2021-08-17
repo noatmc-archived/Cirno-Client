@@ -45,6 +45,7 @@ class Speed : Module() {
             AAC5BHop(),
             AAC6BHop(),
             AAC7BHop(),
+            Yport3(),
             AACHop3313(),
             AACHop350(),
             AACLowHop(),

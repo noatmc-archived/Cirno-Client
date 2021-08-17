@@ -199,8 +199,8 @@ class Velocity : Module() {
                 }
                 "matrix" -> {
                     val yawd = Math.toRadians(mc.thePlayer!!.rotationYaw.toDouble())
-                    val x22 = -sin(yawd) * 0.02
-                    val z22 = cos(yawd) * 0.02
+                    val x22 = -sin(yawd) * 1.02
+                    val z22 = cos(yawd) * 1.02
                     if (time == 7) {
                         mc.thePlayer!!.motionX = mc.thePlayer!!.motionX + x22 + -sin(yawd) / 2
                         mc.thePlayer!!.motionZ = mc.thePlayer!!.motionZ + x22 + cos(yawd) / 2

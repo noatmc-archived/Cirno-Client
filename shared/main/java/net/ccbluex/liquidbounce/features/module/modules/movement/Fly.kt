@@ -31,13 +31,13 @@ import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
 import kotlin.math.sqrt
-
 @ModuleInfo(name = "Fly", description = "Allows you to fly in survival mode.", category = ModuleCategory.MOVEMENT, keyBind = Keyboard.KEY_F)
 class Fly : Module() {
     val modeValue = ListValue("Mode", arrayOf(
             "Vanilla",
             "SmoothVanilla",
-
+            "Bot",
+            "Test",
             // NCP
             "NCP",
             "OldNCP",
@@ -91,15 +91,15 @@ class Fly : Module() {
             "Flag"
     ), "Vanilla")
     private val vanillaSpeedValue = FloatValue("VanillaSpeed", 2f, 0f, 5f)
+    private val damageSpeedValue = FloatValue("DamageSpeed", 2f, 0f, 10f)
     private val vanillaKickBypassValue = BoolValue("VanillaKickBypass", false)
     private val ncpMotionValue = FloatValue("NCPMotion", 0f, 0f, 1f)
-
+    private var wait = 0
     // AAC
     private val aacSpeedValue = FloatValue("AAC1.9.10-Speed", 0.3f, 0f, 1f)
     private val aacFast = BoolValue("AAC3.0.5-Fast", true)
     private val aacMotion = FloatValue("AAC3.3.12-Motion", 10f, 0.1f, 10f)
     private val aacMotion2 = FloatValue("AAC3.3.13-Motion", 10f, 0.1f, 10f)
-
     // Hypixel
     private val hypixelBoost = BoolValue("Hypixel-Boost", true)
     private val hypixelBoostDelay = IntegerValue("Hypixel-BoostDelay", 1200, 0, 2000)
@@ -122,6 +122,7 @@ class Fly : Module() {
     private var damagetrue = false
     private var aacJump = 0.0
     private var done = 0
+    private var damagetrue2 = false
     private var belivin = 0
     private var aac3delay = 0
     private var aac3glideDelay = 0
@@ -195,6 +196,16 @@ class Fly : Module() {
 
                     thePlayer.setPosition(thePlayer.posX, thePlayer.posY + 2, thePlayer.posZ)
                 }
+                "test" -> {
+                    mc.netHandler.addToSendQueue(classProvider.createCPacketKeepAlive())
+                    mc.netHandler.addToSendQueue(classProvider.createCPacketPlayerPosition(thePlayer.posX, thePlayer.posY + 1.59012, thePlayer.posZ, false))
+                    mc.netHandler.addToSendQueue(classProvider.createCPacketPlayerPosition(thePlayer.posX, thePlayer.posY + 2, thePlayer.posZ, false))
+                    mc.netHandler.addToSendQueue(classProvider.createCPacketPlayerPosition(thePlayer.posX, thePlayer.posY + 1, thePlayer.posZ, false))
+                    mc.netHandler.addToSendQueue(classProvider.createCPacketPlayerPosition(thePlayer.posX, thePlayer.posY + 2, thePlayer.posZ, false))
+                    mc.netHandler.addToSendQueue(classProvider.createCPacketPlayerPosition(thePlayer.posX, thePlayer.posY + 1, thePlayer.posZ, false))
+                    mc.netHandler.addToSendQueue(classProvider.createCPacketPlayerPosition(thePlayer.posX, thePlayer.posY + 2, thePlayer.posZ, false))
+                    mc.netHandler.addToSendQueue(classProvider.createCPacketPlayerPosition(thePlayer.posX, thePlayer.posY + 4, thePlayer.posZ, true))
+                }
                 "boosthypixel" -> {
                     if (!thePlayer.onGround)
                         return@run
@@ -247,6 +258,7 @@ class Fly : Module() {
     }
 
     override fun onDisable() {
+        wait = 0
         wasDead = false
         redeskySpeed(0)
 
@@ -254,6 +266,7 @@ class Fly : Module() {
 
         noFlag = false
         damagetrue = false
+        damagetrue2 = false
 
         val mode = modeValue.get()
             if (!mode.toUpperCase().startsWith("AAC") && !mode.equals("Rainbow", ignoreCase = true) &&
@@ -278,6 +291,26 @@ class Fly : Module() {
 
         run {
             when (modeValue.get().toLowerCase()) {
+                "damage" -> {
+                    if(mc.thePlayer!!.hurtTime > 0) {
+                        damagetrue2 = true
+                    }
+                    if (damagetrue2 == true) {
+                        MovementUtils.strafe(damageSpeedValue.get())
+                        thePlayer.motionY = 0.0
+                    }
+                }
+                "bot" -> {
+                    wait++
+                    if (wait == 3) mc.thePlayer!!.jump()
+                    if (wait > 15) {
+                        mc.thePlayer!!.jump()
+                        thePlayer.setPosition(54.0, 4.0, -153.0)
+                    }
+                    if (wait == 20) {
+                        wait = 0
+                    }
+                }
                 "vanilla" -> {
                     thePlayer.capabilities.isFlying = false
                     thePlayer.motionY = 0.0

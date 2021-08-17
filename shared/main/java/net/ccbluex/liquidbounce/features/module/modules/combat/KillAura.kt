@@ -7,15 +7,10 @@ package net.ccbluex.liquidbounce.features.module.modules.combat
 
 import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.api.MinecraftVersion
-import net.ccbluex.liquidbounce.api.enums.EnumFacingType
-import net.ccbluex.liquidbounce.api.enums.WEnumHand
 import net.ccbluex.liquidbounce.api.minecraft.client.entity.IEntity
 import net.ccbluex.liquidbounce.api.minecraft.client.entity.IEntityLivingBase
-import net.ccbluex.liquidbounce.api.minecraft.network.play.client.ICPacketPlayerDigging
 import net.ccbluex.liquidbounce.api.minecraft.network.play.client.ICPacketUseEntity
 import net.ccbluex.liquidbounce.api.minecraft.potion.PotionType
-import net.ccbluex.liquidbounce.api.minecraft.util.WBlockPos
-import net.ccbluex.liquidbounce.api.minecraft.util.WVec3
 import net.ccbluex.liquidbounce.api.minecraft.world.IWorldSettings
 import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Module
@@ -23,8 +18,6 @@ import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
 import net.ccbluex.liquidbounce.features.module.modules.misc.AntiBot
 import net.ccbluex.liquidbounce.features.module.modules.misc.Teams
-import net.ccbluex.liquidbounce.features.module.modules.player.Blink
-import net.ccbluex.liquidbounce.features.module.modules.render.FreeCam
 import net.ccbluex.liquidbounce.injection.backend.Backend
 import net.ccbluex.liquidbounce.utils.*
 import net.ccbluex.liquidbounce.utils.extensions.getDistanceToEntityBox
@@ -33,18 +26,17 @@ import net.ccbluex.liquidbounce.utils.extensions.isClientFriend
 import net.ccbluex.liquidbounce.utils.extensions.isMob
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils
 import net.ccbluex.liquidbounce.utils.render.RenderUtils
-import net.ccbluex.liquidbounce.utils.render.shader.shaders.RainbowShader
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.utils.timer.TimeUtils
 import net.ccbluex.liquidbounce.value.BoolValue
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
-import net.minecraft.client.settings.KeyBinding
 import org.lwjgl.input.Keyboard
 import java.awt.Color
 import java.util.*
 import kotlin.math.*
+
 
 @ModuleInfo(name = "KillAura", description = "Automatically attacks targets around you.",
         category = ModuleCategory.COMBAT, keyBind = Keyboard.KEY_R)
@@ -101,6 +93,7 @@ class KillAura : Module() {
 
     // Bypass
     private val aacValue = BoolValue("AAC", false)
+    private val hitregValue = BoolValue("HitReg", true)
 
     // Turn Speed
     private val maxTurnSpeed: FloatValue = object : FloatValue("MaxTurnSpeed", 180f, 0f, 180f) {
@@ -120,6 +113,7 @@ class KillAura : Module() {
     private val silentRotationValue = BoolValue("SilentRotation", true)
     private val rotationStrafeValue = ListValue("Strafe", arrayOf("Off", "Strict", "Silent"), "Off")
     private val randomCenterValue = BoolValue("RandomCenter", true)
+    private val BadAim = BoolValue("BadAim", true)
     private val outborderValue = BoolValue("Outborder", false)
     private val fovValue = FloatValue("FOV", 180f, 0f, 180f)
 
@@ -273,10 +267,6 @@ class KillAura : Module() {
     }
 
     fun update() {
-        if (cancelRun || (noInventoryAttackValue.get() && (classProvider.isGuiContainer(mc.currentScreen) ||
-                        System.currentTimeMillis() - containerOpen < noInventoryDelayValue.get())))
-            return
-
         // Update target
         updateTarget()
 
@@ -297,13 +287,6 @@ class KillAura : Module() {
      */
     @EventTarget
     fun onUpdate(event: UpdateEvent) {
-        if (cancelRun) {
-            target = null
-            currentTarget = null
-            hitable = false
-            stopBlocking()
-            return
-        }
         if (noInventoryAttackValue.get() && (classProvider.isGuiContainer(mc.currentScreen) ||
                         System.currentTimeMillis() - containerOpen < noInventoryDelayValue.get())) {
             target = null
@@ -326,14 +309,6 @@ class KillAura : Module() {
      */
     @EventTarget
     fun onRender3D(event: Render3DEvent) {
-        if (cancelRun) {
-            target = null
-            currentTarget = null
-            hitable = false
-            stopBlocking()
-            return
-        }
-
         if (noInventoryAttackValue.get() && (classProvider.isGuiContainer(mc.currentScreen) ||
                         System.currentTimeMillis() - containerOpen < noInventoryDelayValue.get())) {
             target = null
@@ -390,7 +365,7 @@ class KillAura : Module() {
 
         // Check is not hitable or check failrate
 
-        if (!hitable || failHit) {
+        if (!hitable || failHit || hitregValue.get()) {
             if (swing && (fakeSwingValue.get() || failHit))
                 thePlayer.swingItem()
         } else {
@@ -573,9 +548,7 @@ class KillAura : Module() {
     private fun updateRotations(entity: IEntity): Boolean {
         if (maxTurnSpeed.get() <= 0F)
             return true
-
         var boundingBox = entity.entityBoundingBox
-
         if (predictValue.get())
             boundingBox = boundingBox.offset(
                     (entity.posX - entity.prevPosX - (mc.thePlayer!!.posX - mc.thePlayer!!.prevPosX)) * RandomUtils.nextFloat(minPredictSize.get(), maxPredictSize.get()),
@@ -591,14 +564,24 @@ class KillAura : Module() {
                 mc.thePlayer!!.getDistanceToEntityBox(entity) < throughWallsRangeValue.get(),
                 maxRange
         ) ?: return false
-
+        val BadAims = RotationUtils.limitAngleChange(RotationUtils.serverRotation, rotation,
+                (Math.ceil(Math.random() * (maxTurnSpeed.get() - minTurnSpeed.get()) + minTurnSpeed.get()).toFloat()))
         val limitedRotation = RotationUtils.limitAngleChange(RotationUtils.serverRotation, rotation,
                 (Math.random() * (maxTurnSpeed.get() - minTurnSpeed.get()) + minTurnSpeed.get()).toFloat())
-
         if (silentRotationValue.get())
             RotationUtils.setTargetRotation(limitedRotation, if (aacValue.get()) 15 else 0)
         else
             limitedRotation.toPlayer(mc.thePlayer!!)
+        if (BadAim.get()) {
+            if (silentRotationValue.get()) {
+                RotationUtils.setTargetRotation(BadAims, if (aacValue.get()) 15 else 0)
+            }
+        }
+        if (BadAim.get()) {
+            if (!silentRotationValue.get()) {
+                BadAims.toPlayer(mc.thePlayer!!)
+            }
+        }
 
         return true
     }
@@ -654,12 +637,6 @@ class KillAura : Module() {
         }
     }
 
-    /**
-     * Check if run should be cancelled
-     */
-    private val cancelRun: Boolean
-        inline get() = mc.thePlayer!!.spectator || !isAlive(mc.thePlayer!!)
-                || LiquidBounce.moduleManager[Blink::class.java].state || LiquidBounce.moduleManager[FreeCam::class.java].state
 
     /**
      * Check if [entity] is alive

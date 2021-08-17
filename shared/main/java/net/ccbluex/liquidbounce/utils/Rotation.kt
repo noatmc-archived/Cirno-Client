@@ -13,7 +13,6 @@ import net.ccbluex.liquidbounce.utils.block.PlaceInfo
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
-
 /**
  * Rotations
  */
