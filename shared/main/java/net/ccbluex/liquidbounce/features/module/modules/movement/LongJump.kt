@@ -53,7 +53,7 @@ class LongJump : Module() {
             run {
                 when (mode.toLowerCase()) {
                     "ncp" -> {
-                        MovementUtils.strafe(MovementUtils.speed * if (canBoost) 2f else 1f)
+                        MovementUtils.strafe(MovementUtils.speed * if (canBoost) ncpBoostValue.get() else 1f)
                         canBoost = false
                     }
                     "aacv1" -> {
