@@ -21,7 +21,7 @@ import org.lwjgl.input.Keyboard
 
 @ModuleInfo(name = "LiquidWalk", description = "Allows you to walk on water.", category = ModuleCategory.MOVEMENT, keyBind = Keyboard.KEY_J)
 class LiquidWalk : Module() {
-    val modeValue = ListValue("Mode", arrayOf("Vanilla", "NCP", "AAC", "AAC3.3.11", "AACFly", "Spartan", "Dolphin"), "NCP")
+    val modeValue = ListValue("Mode", arrayOf("Matrix", "Vanilla", "NCP", "AAC", "AAC3.3.11", "AACFly", "Spartan", "Dolphin"), "NCP")
     private val noJumpValue = BoolValue("NoJump", false)
     private val aacFlyValue = FloatValue("AACFlyMotion", 0.5f, 0.1f, 1f)
 
@@ -35,6 +35,9 @@ class LiquidWalk : Module() {
 
         when (modeValue.get().toLowerCase()) {
             "ncp", "vanilla" -> if (collideBlock(thePlayer.entityBoundingBox, classProvider::isBlockLiquid) && thePlayer.isInsideOfMaterial(classProvider.getMaterialEnum(MaterialType.AIR)) && !thePlayer.sneaking) thePlayer.motionY = 0.08
+            "matrix" -> if (thePlayer.isInWater) {
+                thePlayer.motionY = 0.5
+            }
             "aac" -> {
                 val blockPos = thePlayer.position.down()
                 if (!thePlayer.onGround && getBlock(blockPos) == classProvider.getBlockEnum(BlockType.WATER) || thePlayer.isInWater) {

@@ -57,9 +57,8 @@ class Criticals : Module() {
                 "matrix" -> {
                     thePlayer.fallDistance = 4f
                     thePlayer.onCriticalHit(entity)
-                    if (thePlayer.onGround) {
-                        mc.thePlayer!!.setPosition(mc.thePlayer!!.posX, mc.thePlayer!!.posY + 0.05, mc.thePlayer!!.posZ)
-                    }
+                    mc.thePlayer!!.motionY = 0.42
+                    mc.thePlayer!!.setPosition(mc.thePlayer!!.posX, mc.thePlayer!!.posY + 0.01, mc.thePlayer!!.posZ)
                 }
                 "ncppacket" -> {
                     mc.netHandler.addToSendQueue(classProvider.createCPacketPlayerPosition(x, y + 0.11, z, false))
@@ -91,11 +90,9 @@ class Criticals : Module() {
     @EventTarget
     fun onPacket(event: PacketEvent) {
         val packet = event.packet
-
         if (classProvider.isCPacketPlayer(packet) && modeValue.get().equals("NoGround", ignoreCase = true))
             packet.asCPacketPlayer().onGround = false
     }
-
     override val tag: String?
         get() = modeValue.get()
 }

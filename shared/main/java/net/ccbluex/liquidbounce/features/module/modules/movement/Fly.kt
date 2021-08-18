@@ -14,6 +14,7 @@ import net.ccbluex.liquidbounce.event.*
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
+import net.ccbluex.liquidbounce.features.module.modules.movement.speeds.other.CustomSpeed
 import net.ccbluex.liquidbounce.utils.ClientUtils
 import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.utils.render.RenderUtils
@@ -67,7 +68,6 @@ class Fly : Module() {
             "Mineplex",
             "NeruxVace",
             "Minesucht",
-            "SurvivalDub",
             "Redesky",
 
             // Spartan
@@ -84,17 +84,23 @@ class Fly : Module() {
             "Rainbow",
             "Verus",
             // Other
-            "FlyingPacket",
+            "Verus2",
             "VClip",
             "Jetpack",
             "KeepAlive",
-            "Flag"
+            "Flag",
+            "Custom"
     ), "Vanilla")
     private val vanillaSpeedValue = FloatValue("VanillaSpeed", 2f, 0f, 5f)
     private val damageSpeedValue = FloatValue("DamageSpeed", 2f, 0f, 10f)
     private val vanillaKickBypassValue = BoolValue("VanillaKickBypass", false)
     private val ncpMotionValue = FloatValue("NCPMotion", 0f, 0f, 1f)
     private var wait = 0
+    private val SpeedEnabled = BoolValue("Custom-Speed-Enabled", false)
+    private val CustomGroundValue = BoolValue("GroundSpoof", true)
+    private val CustomTimerValue = FloatValue("Custom-Timer", 1f, 0.1f, 5f)
+    private val CustomSpeedValue = FloatValue("Custom-Speed", 1f, 0f, 5f)
+    private val CustomMotionValue = FloatValue("Custom-Motion", 0f, 0f, 1f)
     // AAC
     private val aacSpeedValue = FloatValue("AAC1.9.10-Speed", 0.3f, 0f, 1f)
     private val aacFast = BoolValue("AAC3.0.5-Fast", true)
@@ -291,6 +297,15 @@ class Fly : Module() {
 
         run {
             when (modeValue.get().toLowerCase()) {
+                "custom" -> {
+                mc.thePlayer!!.motionY = CustomMotionValue.get().toDouble()
+                mc.timer.timerSpeed = CustomTimerValue.get()
+                    if (SpeedEnabled.get()) {
+                        MovementUtils.strafe(CustomSpeedValue.get())
+                    }
+                mc.thePlayer!!.onGround = CustomGroundValue.get()
+                    mc.netHandler.addToSendQueue(classProvider.createCPacketPlayer(CustomGroundValue.get()))
+                }
                 "damage" -> {
                     if(mc.thePlayer!!.hurtTime > 0) {
                         damagetrue2 = true
@@ -335,7 +350,7 @@ class Fly : Module() {
                         mc.netHandler.addToSendQueue(classProvider.createCPacketPlayer(true))
                     }
                 }
-                "flyingpacket" -> {
+                "verus2" -> {
                     thePlayer.motionY = -0.1
                     MovementUtils.HClip(0.03)
                     mc.timer.timerSpeed = 0.5f
@@ -388,10 +403,6 @@ class Fly : Module() {
                     if (mc.gameSettings.keyBindJump.isKeyDown && thePlayer.posY < startY - 0.1)
                         thePlayer.motionY = 0.2
                     MovementUtils.strafe()
-                }
-                "survivaldub" -> {
-                        thePlayer.motionY = -0.0055
-                        mc.timer.timerSpeed = 1.3f
                 }
                 "vclip" -> {
                     if (mc.thePlayer!!.fallDistance > 0.49) {

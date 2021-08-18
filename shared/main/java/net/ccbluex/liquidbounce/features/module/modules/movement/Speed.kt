@@ -70,6 +70,8 @@ class Speed : Module() {
             Matrix(), // matrix
             Matrix2(),
             MatrixFast(),
+            FastMatrix(),
+            MatrixCustom(),
             MatrixOnGround(),
             MineplexGround(),  // Other
             WarAC(), // WarAC
@@ -89,10 +91,21 @@ class Speed : Module() {
                 onEnable()
         }
     }
+    val matrixcustomHclipValue = FloatValue("MatrixHClip", 0.1f, 0f, 1f)
+    val matrixcustomAirSpeedValue = FloatValue("MatrixAirSpeed", 0.0206f, 0f, 0.1f)
+    val matrixcustomStrafeValue = FloatValue("MatrixStrafe", 1.01f, 0f, 2f)
+    val matrixcustomAirTimerValue = FloatValue("MatrixAirTimer", 1.05f, 1.05f, 2f)
+    val matrixcustomGroundTimerValue = FloatValue("MatrixGroundTimer", 1.6f, 0.1f, 4.5f)
+    val customFallTimer3 = FloatValue("MatrixFallTimer3", 1.05f, 1f, 4.5f)
+    val customFallTimer2 = FloatValue("MatrixFallTimer2", 0.42f, 0.1f, 4.5f)
+    val customFallTimer1 = FloatValue("MatrixFallTimer1", 1.81f, 1.05f, 4.5f)
     val customSpeedValue = FloatValue("CustomSpeed", 1.6f, 0.2f, 2f)
     val customYValue = FloatValue("CustomY", 0f, 0f, 4f)
     val customTimerValue = FloatValue("CustomTimer", 1f, 0.1f, 2f)
     val customStrafeValue = BoolValue("CustomStrafe", true)
+    val CustommatrixHclip = BoolValue("CustomMatrixHclip", false)
+    val CustommatrixStrafeValue = BoolValue("CustomMatrixStrafe", false)
+    val CustommatrixFallTimerValue = BoolValue("CustomMatrixFallTimer", true)
     val resetXZValue = BoolValue("CustomResetXZ", false)
     val resetYValue = BoolValue("CustomResetY", false)
     val portMax = FloatValue("AAC-PortLength", 1f, 1f, 20f)
