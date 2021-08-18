@@ -67,7 +67,6 @@ class Fly : Module() {
             "Mineplex",
             "NeruxVace",
             "Minesucht",
-            "SurvivalDub",
             "Redesky",
 
             // Spartan
@@ -388,10 +387,6 @@ class Fly : Module() {
                     if (mc.gameSettings.keyBindJump.isKeyDown && thePlayer.posY < startY - 0.1)
                         thePlayer.motionY = 0.2
                     MovementUtils.strafe()
-                }
-                "survivaldub" -> {
-                        thePlayer.motionY = -0.0055
-                        mc.timer.timerSpeed = 1.3f
                 }
                 "vclip" -> {
                     if (mc.thePlayer!!.fallDistance > 0.49) {
