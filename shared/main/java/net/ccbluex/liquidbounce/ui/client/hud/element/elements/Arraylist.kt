@@ -33,15 +33,15 @@ class Arraylist(x: Double = 1.0, y: Double = 2.0, scale: Float = 1F,
                 side: Side = Side(Horizontal.RIGHT, Vertical.UP)) : Element(x, y, scale, side) {
     private val rainbowX = FloatValue("Rainbow-X", -1000F, -2000F, 2000F)
     private val rainbowY = FloatValue("Rainbow-Y", -1000F, -2000F, 2000F)
-    private val colorModeValue = ListValue("Text-Color", arrayOf("Custom", "Random", "Rainbow"), "Custom")
-    private val colorRedValue = IntegerValue("Text-R", 0, 0, 255)
-    private val colorGreenValue = IntegerValue("Text-G", 111, 0, 255)
+    private val colorModeValue = ListValue("Text-Color", arrayOf("Custom", "Random", "Rainbow"), "Rainbow")
+    private val colorRedValue = IntegerValue("Text-R", 255, 0, 255)
+    private val colorGreenValue = IntegerValue("Text-G", 255, 0, 255)
     private val colorBlueValue = IntegerValue("Text-B", 255, 0, 255)
-    private val rectColorModeValue = ListValue("Rect-Color", arrayOf("Custom", "Random", "Rainbow"), "Rainbow")
-    private val rectColorRedValue = IntegerValue("Rect-R", 255, 0, 255)
-    private val rectColorGreenValue = IntegerValue("Rect-G", 255, 0, 255)
+    private val rectColorModeValue = ListValue("Rect-Color", arrayOf("Custom", "Random", "Rainbow"), "Custom")
+    private val rectColorRedValue = IntegerValue("Rect-R", 101, 0, 255)
+    private val rectColorGreenValue = IntegerValue("Rect-G", 147, 0, 255)
     private val rectColorBlueValue = IntegerValue("Rect-B", 255, 0, 255)
-    private val rectColorBlueAlpha = IntegerValue("Rect-Alpha", 255, 0, 255)
+    private val rectColorBlueAlpha = IntegerValue("Rect-Alpha", 155, 0, 255)
     private val saturationValue = FloatValue("Random-Saturation", 0.9f, 0f, 1f)
     private val brightnessValue = FloatValue("Random-Brightness", 1f, 0f, 1f)
     private val tags = BoolValue("Tags", true)
@@ -66,7 +66,6 @@ class Arraylist(x: Double = 1.0, y: Double = 2.0, scale: Float = 1F,
 
     override fun drawElement(): Border? {
         val fontRenderer = fontValue.get()
-
         AWTFontRenderer.assumeNonVolatile = true
 
         // Slide animation - update every render
@@ -134,7 +133,6 @@ class Arraylist(x: Double = 1.0, y: Double = 2.0, scale: Float = 1F,
                     val yPos = (if (side.vertical == Vertical.DOWN) -textSpacer else textSpacer) *
                             if (side.vertical == Vertical.DOWN) index + 1 else index
                     val moduleColor = Color.getHSBColor(module.hue, saturation, brightness).rgb
-
                     val backgroundRectRainbow = backgroundColorMode.equals("Rainbow", ignoreCase = true)
 
                     RainbowShader.begin(backgroundRectRainbow, if (rainbowX.get() == 0.0F) 0.0F else 1.0F / rainbowX.get(), if (rainbowY.get() == 0.0F) 0.0F else 1.0F / rainbowY.get(), System.currentTimeMillis() % 10000 / 10000F).use {
@@ -151,7 +149,6 @@ class Arraylist(x: Double = 1.0, y: Double = 2.0, scale: Float = 1F,
                     }
 
                     val rainbow = colorMode.equals("Rainbow", ignoreCase = true)
-
                     classProvider.getGlStateManager().resetColor()
                     RainbowFontShader.begin(rainbow, if (rainbowX.get() == 0.0F) 0.0F else 1.0F / rainbowX.get(), if (rainbowY.get() == 0.0F) 0.0F else 1.0F / rainbowY.get(), System.currentTimeMillis() % 10000 / 10000F).use {
                         fontRenderer.drawString(displayString, xPos - if (rectMode.equals("right", true)) 3 else 0, yPos + textY, when {

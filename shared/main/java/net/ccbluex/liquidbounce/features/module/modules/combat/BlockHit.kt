@@ -22,7 +22,7 @@ class BlockHit : Module() {
         mc.gameSettings.keyBindUseItem.pressed = true
     }
     fun onUpdate(event: UpdateEvent) {
-        if (mc.gameSettings.keyBindUseItem.pressed) {
+        if (mc.gameSettings.isKeyDown(mc.gameSettings.keyBindUseItem)) {
             mc.gameSettings.keyBindUseItem.pressed = false
         }
     }

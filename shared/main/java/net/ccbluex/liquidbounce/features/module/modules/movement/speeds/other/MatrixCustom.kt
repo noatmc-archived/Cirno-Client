@@ -33,7 +33,7 @@ class MatrixCustom : SpeedMode("MatrixCustom") {
         }
         if (!mc.thePlayer!!.onGround) {
         if (speed.CustommatrixFallTimerValue.get()) {
-            if (mc.thePlayer!!.fallDistance < 0.1f && !mc.thePlayer!!.onGround) {
+            if (mc.thePlayer!!.fallDistance < 0.1f) {
                 mc.timer.timerSpeed = speed.customFallTimer1.get()
             }
             if (mc.thePlayer!!.fallDistance > 0.2f) {

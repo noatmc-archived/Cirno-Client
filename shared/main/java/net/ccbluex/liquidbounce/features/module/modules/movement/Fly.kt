@@ -81,6 +81,7 @@ class Fly : Module() {
             "HAC",
             "WatchCat",
             "Matrix",
+            "ThotPatrol",
             "Rainbow",
             "Verus",
             // Other
@@ -297,6 +298,15 @@ class Fly : Module() {
 
         run {
             when (modeValue.get().toLowerCase()) {
+                "thotpatrol" -> {
+                            if (mc.thePlayer!!.fallDistance >= 0.98) {
+                            mc.thePlayer!!.onGround = true
+                            mc.netHandler.addToSendQueue(classProvider.createCPacketPlayer(false))
+                            mc.thePlayer!!.fallDistance = 0.2f
+                            mc.thePlayer!!.motionY = 0.0
+                            MovementUtils.VClip(0.15)
+                    }
+                }
                 "custom" -> {
                 mc.thePlayer!!.motionY = CustomMotionValue.get().toDouble()
                 mc.timer.timerSpeed = CustomTimerValue.get()
@@ -357,11 +367,6 @@ class Fly : Module() {
                     thePlayer.motionY = if (thePlayer.motionY <= -0.02) 0.02 else -0.02
                 }
                 "rainbow" -> {
-                    mc.gameSettings.keyBindJump.pressed = false
-                    mc.gameSettings.keyBindForward.pressed = false
-                    mc.gameSettings.keyBindBack.pressed = false
-                    mc.gameSettings.keyBindLeft.pressed = false
-                    mc.gameSettings.keyBindRight.pressed = false
                     val yaw = Math.toRadians(mc.thePlayer!!.rotationYaw.toDouble())
                     val x22 = -sin(yaw) * alRain.get()
                     val z22 = cos(yaw) * alRain.get()
@@ -375,6 +380,11 @@ class Fly : Module() {
                         rainbow = true
                     }
                     if (rainbow) {
+                        mc.gameSettings.keyBindJump.pressed = false
+                        mc.gameSettings.keyBindForward.pressed = false
+                        mc.gameSettings.keyBindBack.pressed = false
+                        mc.gameSettings.keyBindLeft.pressed = false
+                        mc.gameSettings.keyBindRight.pressed = false
                         mc.thePlayer!!.motionZ = mc.thePlayer!!.motionZ * z22
                         mc.thePlayer!!.motionY = mc.thePlayer!!.motionY + VerticalRain.get()
                         mc.thePlayer!!.motionX = mc.thePlayer!!.motionX * x22

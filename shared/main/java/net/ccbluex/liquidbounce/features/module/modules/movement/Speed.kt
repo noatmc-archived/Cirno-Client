@@ -27,6 +27,7 @@ import java.util.*
 class Speed : Module() {
     private val speedModes = arrayOf( // NCP
             NCPBHop(),
+            ThotPatrol(),
             NCPFHop(),
             SNCPBHop(),
             NCPHop(),

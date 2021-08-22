@@ -183,7 +183,7 @@ class LiquidChat : Module() {
     @EventTarget
     fun onUpdate(updateEvent: UpdateEvent) {
         if (client.isConnected() || (loginThread != null && loginThread!!.isAlive)) return
-        client.disconnect()
+
         if (connectTimer.hasTimePassed(5000)) {
             connect()
             connectTimer.reset()

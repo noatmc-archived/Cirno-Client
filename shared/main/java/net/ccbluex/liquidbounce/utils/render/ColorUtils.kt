@@ -6,6 +6,7 @@
 package net.ccbluex.liquidbounce.utils.render
 
 import java.awt.Color
+import java.lang.Math.abs
 import java.util.*
 import java.util.regex.Pattern
 
@@ -95,5 +96,10 @@ object ColorUtils {
     fun rainbow(offset: Long, alpha: Float): Color {
         val currentColor = Color(Color.HSBtoRGB((System.nanoTime() + offset) / 10000000000F % 1, 1F, 1F))
         return Color(currentColor.red / 255F * 1F, currentColor.green / 255f * 1F, currentColor.blue / 255F * 1F, alpha)
+    }
+    private val startTime=System.currentTimeMillis()
+
+    fun hslRainbow(index: Int,lowest: Float=0.41f,bigest: Float=0.58f,indexOffset: Int=300,timeSplit: Int=3000):Color{
+        return Color.getHSBColor((abs(((((System.currentTimeMillis()-startTime).toInt()+index*indexOffset)/timeSplit.toFloat())%2)-1)*(bigest-lowest))+lowest,0.7f,1f)
     }
 }

@@ -17,9 +17,11 @@ import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
 import net.ccbluex.liquidbounce.features.module.modules.render.FreeCam
+import net.ccbluex.liquidbounce.utils.MovementUtils
 import net.ccbluex.liquidbounce.utils.RotationUtils
 import net.ccbluex.liquidbounce.utils.VecRotation
 import net.ccbluex.liquidbounce.utils.block.BlockUtils.collideBlock
+import net.ccbluex.liquidbounce.utils.block.BlockUtils
 import net.ccbluex.liquidbounce.utils.misc.FallingPlayer
 import net.ccbluex.liquidbounce.utils.timer.TickTimer
 import net.ccbluex.liquidbounce.value.FloatValue
@@ -62,13 +64,16 @@ class NoFall : Module() {
                     mc.netHandler.addToSendQueue(classProvider.createCPacketPlayer(true))
                 }
             }
+            "matrix" -> {
+                if (mc.thePlayer!!.fallDistance > 2.93) {
+                    mc.thePlayer!!.motionX = 0.0
+                    mc.thePlayer!!.motionZ = 0.0
+                    MovementUtils.strafe(0.0F)
+                    mc.netHandler.addToSendQueue(classProvider.createCPacketPlayer(true))
+                }
+                }
             "cubecraft" -> if (mc.thePlayer!!.fallDistance > 2f) {
                 mc.thePlayer!!.onGround = false
-                mc.thePlayer!!.sendQueue.addToSendQueue(classProvider.createCPacketPlayer(true))
-            }
-            "matrix" -> if (mc.thePlayer!!.fallDistance > 10f) {
-                OPTPMODE = true
-                mc.thePlayer!!.onGround = true
                 mc.thePlayer!!.sendQueue.addToSendQueue(classProvider.createCPacketPlayer(true))
             }
             "aac" -> {
@@ -138,14 +143,6 @@ class NoFall : Module() {
     fun onMove(event: MoveEvent) {
         if (collideBlock(mc.thePlayer!!.entityBoundingBox, classProvider::isBlockLiquid) || collideBlock(classProvider.createAxisAlignedBB(mc.thePlayer!!.entityBoundingBox.maxX, mc.thePlayer!!.entityBoundingBox.maxY, mc.thePlayer!!.entityBoundingBox.maxZ, mc.thePlayer!!.entityBoundingBox.minX, mc.thePlayer!!.entityBoundingBox.minY - 0.01, mc.thePlayer!!.entityBoundingBox.minZ), classProvider::isBlockLiquid))
             return
-        if (modeValue.get().equals("Matrix")) {
-            if (OPTPMODE == true) {
-                mc.thePlayer!!.setPosition(mc.thePlayer!!.posX, mc.thePlayer!!.posY + 110, mc.thePlayer!!.posZ)
-                mc.thePlayer!!.setPosition(mc.thePlayer!!.posX, mc.thePlayer!!.posY, mc.thePlayer!!.posZ)
-                mc.thePlayer!!.fallDistance = 0f
-                OPTPMODE = false
-            }
-        }
         if (modeValue.get().equals("laac", ignoreCase = true)) {
             if (!jumped && !mc.thePlayer!!.onGround && !mc.thePlayer!!.isOnLadder && !mc.thePlayer!!.isInWater && !mc.thePlayer!!.isInWeb && mc.thePlayer!!.motionY < 0.0) {
                 event.x = 0.0

@@ -43,8 +43,8 @@ object LiquidBounce {
 
     // Client information
     const val CLIENT_NAME = "LiquidBounce"
-    const val CLIENT_VERSION = 1
-    const val IN_DEV = true
+    const val CLIENT_VERSION = 3
+    const val IN_DEV = false
     const val CLIENT_CREATOR = "CCBlueX"
     const val MINECRAFT_VERSION = Backend.MINECRAFT_VERSION
     const val CLIENT_CLOUD = "https://cloud.liquidbounce.net/LiquidBounce"
@@ -62,7 +62,7 @@ object LiquidBounce {
     lateinit var clickGui: ClickGui
 
     // Update information
-    var latestVersion = 1
+    var latestVersion = 3
 
     // Menu Background
     var background: IResourceLocation? = null
@@ -78,7 +78,7 @@ object LiquidBounce {
     fun startClient() {
         isStarting = true
 
-        ClientUtils.getLogger().info("Starting Cirno Client Private Alpha, by Mimikyuin")
+        ClientUtils.getLogger().info("Starting Cirno Client, by Mimikyuin")
 
         // Create file manager
         fileManager = FileManager()
@@ -158,7 +158,7 @@ object LiquidBounce {
             // Check json is valid object and has current minecraft version
             if (jsonObj is JsonObject && jsonObj.has(MINECRAFT_VERSION)) {
                 // Get official latest client version
-                latestVersion = -1
+                latestVersion = 3
             }
         } catch (exception: Throwable) { // Print throwable to console
             ClientUtils.getLogger().error("Failed to check for updates.", exception)
@@ -195,5 +195,4 @@ object LiquidBounce {
         // Shutdown discord rpc
         clientRichPresence.shutdown()
     }
-
 }
