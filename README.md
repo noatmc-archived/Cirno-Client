@@ -1,9 +1,9 @@
 # LiquidBounce (its a lb fork)
 A free mixin-based injection hacked-client for Minecraft using Minecraft Forge, supporting versions 1.12.2 and 1.8.9, and soon will support 1.16.3.
-
+cirno guilded: https://www.guilded.gg/i/VpW6a5Pk
 Website: https://liquidbounce.net \
 Forum: https://forums.ccbluex.net \
-Guilded: https://www.guilded.gg/CCBlueX \
+Guilded: https://www.guilded.gg/CCBlueX \ (not cirnos)
 YouTube: https://youtube.com/CCBlueX \
 Twitter: https://twitter.com/CCBlueX 
 
