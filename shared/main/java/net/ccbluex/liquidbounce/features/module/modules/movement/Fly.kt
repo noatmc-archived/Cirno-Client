@@ -73,6 +73,7 @@ class Fly : Module() {
             "NeruxVace",
             "Minesucht",
             "Redesky",
+            "Lunar",
 
             // Spartan
             "Spartan",
@@ -173,9 +174,9 @@ class Fly : Module() {
                     mc.timer.timerSpeed = 0.25f;
                 }
                 "verus" -> {
-                        mc.netHandler.addToSendQueue(classProvider.createCPacketPlayerPosition(mc.thePlayer!!.posX, mc.thePlayer!!.posY + 3.45, mc.thePlayer!!.posZ, false));
-                        mc.netHandler.addToSendQueue(classProvider.createCPacketPlayerPosition(mc.thePlayer!!.posX, mc.thePlayer!!.posY, mc.thePlayer!!.posZ, false));
-                        mc.netHandler.addToSendQueue(classProvider.createCPacketPlayerPosition(mc.thePlayer!!.posX, mc.thePlayer!!.posY, mc.thePlayer!!.posZ, true));
+                    mc.netHandler.addToSendQueue(classProvider.createCPacketPlayerPosition(mc.thePlayer!!.posX, mc.thePlayer!!.posY + 3.45, mc.thePlayer!!.posZ, false));
+                    mc.netHandler.addToSendQueue(classProvider.createCPacketPlayerPosition(mc.thePlayer!!.posX, mc.thePlayer!!.posY, mc.thePlayer!!.posZ, false));
+                    mc.netHandler.addToSendQueue(classProvider.createCPacketPlayerPosition(mc.thePlayer!!.posX, mc.thePlayer!!.posY, mc.thePlayer!!.posZ, true));
                 }
                 "oldncp" -> {
                     if (!thePlayer.onGround)
@@ -272,7 +273,6 @@ class Fly : Module() {
         wait = 0
         wasDead = false
         redeskySpeed(0)
-
         val thePlayer = mc.thePlayer ?: return
 
         noFlag = false
@@ -280,12 +280,12 @@ class Fly : Module() {
         damagetrue2 = false
 
         val mode = modeValue.get()
-            if (!mode.toUpperCase().startsWith("AAC") && !mode.equals("Rainbow", ignoreCase = true) &&
-                    !mode.equals("Matrix", ignoreCase = true)) {
-                thePlayer.motionX = 0.0
-                thePlayer.motionY = 0.0
-                thePlayer.motionZ = 0.0
-            }
+        if (!mode.toUpperCase().startsWith("AAC") && !mode.equals("Rainbow", ignoreCase = true) &&
+                !mode.equals("Matrix", ignoreCase = true)) {
+            thePlayer.motionX = 0.0
+            thePlayer.motionY = 0.0
+            thePlayer.motionZ = 0.0
+        }
         if(mode.equals("Redesky", ignoreCase = true)) {
             redeskyHClip2(0.0)
         }
@@ -303,21 +303,30 @@ class Fly : Module() {
         run {
             when (modeValue.get().toLowerCase()) {
                 "thotpatrol" -> {
-                            if (mc.thePlayer!!.fallDistance >= 0.98) {
-                            mc.thePlayer!!.onGround = true
-                            mc.netHandler.addToSendQueue(classProvider.createCPacketPlayer(false))
-                            mc.thePlayer!!.fallDistance = 0.2f
-                            mc.thePlayer!!.motionY = 0.0
-                            MovementUtils.VClip(0.15)
+                    if (mc.thePlayer!!.fallDistance >= 0.98) {
+                        mc.thePlayer!!.onGround = true
+                        mc.netHandler.addToSendQueue(classProvider.createCPacketPlayer(false))
+                        mc.thePlayer!!.fallDistance = 0.2f
+                        mc.thePlayer!!.motionY = 0.0
+                        MovementUtils.VClip(0.15)
                     }
                 }
+                "lunar" -> {
+                    mc.thePlayer!!.motionY = 0.000001
+                    MovementUtils.HClip(0.75)
+                    MovementUtils.VClip(0.0001)
+                    mc.thePlayer!!.capabilities.isFlying = false
+                    mc.thePlayer!!.onGround = true
+                    mc.timer.timerSpeed = 0.5f
+                    mc.thePlayer!!.fallDistance = 0f
+                }
                 "custom" -> {
-                mc.thePlayer!!.motionY = CustomMotionValue.get().toDouble()
-                mc.timer.timerSpeed = CustomTimerValue.get()
+                    mc.thePlayer!!.motionY = CustomMotionValue.get().toDouble()
+                    mc.timer.timerSpeed = CustomTimerValue.get()
                     if (SpeedEnabled.get()) {
                         MovementUtils.strafe(CustomSpeedValue.get())
                     }
-                mc.thePlayer!!.onGround = CustomGroundValue.get()
+                    mc.thePlayer!!.onGround = CustomGroundValue.get()
                     mc.netHandler.addToSendQueue(classProvider.createCPacketPlayer(CustomGroundValue.get()))
                 }
                 "damage" -> {
@@ -735,7 +744,7 @@ class Fly : Module() {
                 ClientUtils.displayChatMessage("§8[§c§lBoostHypixel-§a§lFly§8] §cSetback detected.")
             }
         }
-        }
+    }
     @EventTarget
     fun onMove(event: MoveEvent) {
         when (modeValue.get().toLowerCase()) {
