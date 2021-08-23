@@ -26,6 +26,7 @@ import net.ccbluex.liquidbounce.utils.misc.FallingPlayer
 import net.ccbluex.liquidbounce.utils.timer.TickTimer
 import net.ccbluex.liquidbounce.value.FloatValue
 import net.ccbluex.liquidbounce.value.ListValue
+import net.minecraft.util.BlockPos
 import kotlin.math.ceil
 import kotlin.math.sqrt
 
@@ -65,12 +66,7 @@ class NoFall : Module() {
                 }
             }
             "matrix" -> {
-                if (mc.thePlayer!!.fallDistance > 2.93) {
-                    mc.thePlayer!!.motionX = 0.0
-                    mc.thePlayer!!.motionZ = 0.0
-                    MovementUtils.strafe(0.0F)
                     mc.netHandler.addToSendQueue(classProvider.createCPacketPlayer(true))
-                }
                 }
             "cubecraft" -> if (mc.thePlayer!!.fallDistance > 2f) {
                 mc.thePlayer!!.onGround = false

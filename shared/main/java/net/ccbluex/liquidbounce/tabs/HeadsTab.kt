@@ -28,7 +28,7 @@ class HeadsTab : WrappedCreativeTabs("Heads") {
     init {
         representedType.backgroundImageName = "item_search.png"
 
-        loadHeads()
+        //loadHeads()
     }
 
     /**

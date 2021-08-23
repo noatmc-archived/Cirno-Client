@@ -57,6 +57,14 @@ object MovementUtils : MinecraftInstance() {
         thePlayer.setPosition(thePlayer.posX, thePlayer.posY + length, thePlayer.posZ)
     }
     @JvmStatic
+    fun Clip(length: Double, length2: Double) {
+        val thePlayer = mc.thePlayer!!
+        val yaw = Math.toRadians(thePlayer.rotationYaw.toDouble())
+        val x = -sin(yaw) * length
+        val z = cos(yaw) * length
+        thePlayer.setPosition(thePlayer.posX + x, thePlayer.posY + length2, thePlayer.posZ + z)
+    }
+    @JvmStatic
     fun forward(length: Double) {
         val thePlayer = mc.thePlayer!!
         val yaw = Math.toRadians(thePlayer.rotationYaw.toDouble())

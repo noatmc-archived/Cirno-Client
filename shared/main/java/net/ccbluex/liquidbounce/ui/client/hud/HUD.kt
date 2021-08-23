@@ -42,13 +42,13 @@ open class HUD : MinecraftInstance() {
         @JvmStatic
         fun createDefault() = HUD()
                 .addElement(Text.defaultClient())
-                .addElement(TabGUI())
+                //.addElement(TabGUI())
                 .addElement(Arraylist())
                 .addElement(ScoreboardElement())
                 .addElement(Armor())
                 .addElement(Effects())
                 .addElement(Notifications())
-                .addElement(SpeedGraph())
+                //.addElement(SpeedGraph())
 
     }
 

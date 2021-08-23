@@ -161,7 +161,7 @@ class ModuleManager : Listenable {
                 SuperKnockback::class.java,
                 ProphuntESP::class.java,
                 AutoFish::class.java,
-                Disabler::class.java,
+                //Disabler::class.java,
                 matrixantivoid::class.java,
                 AntiFlag::class.java,
                 //ModuleList::class.java,

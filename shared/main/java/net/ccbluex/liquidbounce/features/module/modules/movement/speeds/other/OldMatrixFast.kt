@@ -11,7 +11,7 @@ import net.ccbluex.liquidbounce.features.module.modules.movement.Speed
 import net.ccbluex.liquidbounce.features.module.modules.movement.speeds.SpeedMode
 import net.ccbluex.liquidbounce.utils.MovementUtils
 
-class MatrixFast : SpeedMode("MatrixFast") {
+class OldMatrixFast : SpeedMode("OldMatrixFast") {
 
     override fun onUpdate() {
         if (mc.thePlayer!!.isInWater) return

@@ -68,10 +68,11 @@ class Speed : Module() {
             HiveHop(),
             HypixelHop(),
             Mineplex(),
-            Matrix(), // matrix
-            Matrix2(),
-            MatrixFast(),
-            FastMatrix(),
+            OldMatrix(), // matrix
+            OldMatrix2(),
+            OldMatrixFast(),
+            OldMatrix3(),
+            Matrix(),
             MatrixCustom(),
             MatrixOnGround(),
             MineplexGround(),  // Other

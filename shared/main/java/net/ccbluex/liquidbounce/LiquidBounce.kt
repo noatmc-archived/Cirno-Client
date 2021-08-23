@@ -43,7 +43,7 @@ object LiquidBounce {
 
     // Client information
     const val CLIENT_NAME = "LiquidBounce"
-    const val CLIENT_VERSION = 3
+    const val CLIENT_VERSION = 4
     const val IN_DEV = false
     const val CLIENT_CREATOR = "CCBlueX"
     const val MINECRAFT_VERSION = Backend.MINECRAFT_VERSION
@@ -62,7 +62,7 @@ object LiquidBounce {
     lateinit var clickGui: ClickGui
 
     // Update information
-    var latestVersion = 3
+    var latestVersion = 4
 
     // Menu Background
     var background: IResourceLocation? = null
@@ -158,7 +158,7 @@ object LiquidBounce {
             // Check json is valid object and has current minecraft version
             if (jsonObj is JsonObject && jsonObj.has(MINECRAFT_VERSION)) {
                 // Get official latest client version
-                latestVersion = 3
+                latestVersion = 4
             }
         } catch (exception: Throwable) { // Print throwable to console
             ClientUtils.getLogger().error("Failed to check for updates.", exception)
